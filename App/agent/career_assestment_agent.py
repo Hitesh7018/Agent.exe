@@ -61,12 +61,12 @@ class CareerAssessmentAgent:
 
    def tool_node(self, state: dict)-> dict:
     messages = state["messages"]
-    last_massage= messages[-1]
-    print("\n\n\n",last_massage)
+    last_message= messages[-1]
+    print("\n\n\n",last_message)
     tool_output=[]
 
-    if hasattr(last_massage, "tool_calls") : 
-        for tool_call in last_message.tool_call:
+    if hasattr(last_message, "tool_calls") : 
+        for tool_call in last_message.tool_calls:
             tool_name = tool_call["name"]
             tool_args= tool_call["args"]
             tool_id = tool_call["id"]
@@ -75,14 +75,14 @@ class CareerAssessmentAgent:
             tool_functioin = self.tools_by_name.get(tool_name)
 
             if tool_functioin:
-                tool_result = tool_functioin.invoke(tool_name)
+                tool_result = tool_functioin.invoke(tool_args)
             
             else:
                 tool_result= f"Error: Tool '{tool_name}' not found"
 
 
             tool_output.append(
-                ToolMessages(content=(str(tool_result)),
+                ToolMessage(content=(str(tool_result)),
                             tool_call_id=tool_id,
                             name=tool_name)
             )
@@ -92,7 +92,7 @@ class CareerAssessmentAgent:
 
 
 if __name__ == "__main__":
-    docs = get_resume_data.invoke('{"query":"What are the work experiences of the user?"}')  
+    docs = get_resume_data.invoke("What are the work experiences of the user?")  
     print(docs)
    
 
