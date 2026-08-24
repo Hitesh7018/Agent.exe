@@ -13,12 +13,12 @@ class AgentState(TypedDict):
     messages: Annotated[list, add_messages]
     career_report: str
 
-def route_assessment_agent(state: AgentState) -> Literal["_assessment_agent","__end__"]:
+def route_assessment_agent(state: AgentState) -> Literal["assessment_tools","__end__"]:
     messages = state["messages"]
     last_message = messages[-1]
     
     if hasattr(last_message,"tool_calls")and last_message.tool_calls:
-        return "_assessment_tools"
+        return "assessment_tools"
     
     state["career_report"] = last_message.content
     print(f"\n\nCAREER REPORT: {state['career_report']}\n\n")
@@ -43,17 +43,17 @@ class ExecuteWorkflow:
         workflow_builder.add_node("job_search", job_search_agent.agent_node)
         workflow_builder.add_node("job_search_tools", job_search_agent.tool_node)
         
-        workflow_builder.add_edge(START,"career_assessment")
+        workflow_builder.add_edge(START,"assessment_agent")
         workflow_builder.add_conditional_edges(
-            "career_assessment",
-            route_assessment,
+            "assessment_agent",
+            route_assessment_agent,
             {
                 "assessment_tools": "assessment_tools",
                 "__end__": END
             }
         )
         
-        workflow_builder.add_edge("assessment_tools","career_assessment")
+        workflow_builder.add_edge("assessment_tools","assessment_agent")
         
        # workflow_builder.add_conditional_edges(
         #   "job_search",

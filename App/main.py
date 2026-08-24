@@ -59,7 +59,7 @@ def delete_item(item: str) -> dict:
 def delete_all_items() -> dict:
     data.clear()
     return {"message": "All items have been deleted from the database"}
-from App.workflows.workflow import ExecuteWorkflow 
+from App.workflow.workflow import ExecuteWorkflow 
 
 @app.post("/execute-workflow")
 def process_workflow():
