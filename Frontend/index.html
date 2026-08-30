@@ -1,66 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Career Copilot</title>
+  <meta name="description" content="AI-powered career assessment">
+  <title>Career Lens | Assessment</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-  <main class="app-shell">
+  <div class="shell">
     <header class="topbar">
-      <a class="brand" href="./" aria-label="Career Copilot home">
-        <span class="brand-mark" aria-hidden="true">CC</span>
-        <span>Career Copilot</span>
+      <a class="brand" href="./" aria-label="Career Lens home">
+        <span class="brand-mark" aria-hidden="true">+</span>
+        <span>career lens</span>
       </a>
-      <span class="status"><span class="status-dot"></span>Ready to help</span>
+      <span class="status"><span class="status-dot" aria-hidden="true"></span>AI assessment</span>
     </header>
 
-    <section class="chat-layout" aria-labelledby="page-title">
-      <div class="intro">
-        <p class="eyebrow">Your next move</p>
-        <h1 id="page-title">Find work that fits <em>you.</em></h1>
-        <p class="intro-copy">Upload your resume and get a focused job recommendation based on your career profile.</p>
-      </div>
+    <main class="workspace">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Personal intelligence / 01</p>
+        <h1 id="page-title">See the shape<br><em>of your next move.</em></h1>
+        <p class="intro-copy">A focused read of your profile, experience, and potential. One click, no questionnaire.</p>
+        <button id="request-button" class="request-button" type="button">
+          <span class="button-icon" aria-hidden="true">&#8594;</span>
+          <span class="button-label">Generate assessment</span>
+        </button>
+        <p class="hint">Your assessment is built from the resume in your workspace.</p>
+      </section>
 
-      <section class="conversation" aria-label="Career Copilot conversation">
-        <div class="message assistant-message">
-          <div class="avatar" aria-hidden="true">CC</div>
-          <div class="message-content">
-            <div class="message-meta"><strong>Career Copilot</strong><span>just now</span></div>
-            <p>Upload your resume and I'll look through it to find roles that match your strengths.</p>
+      <section class="conversation" aria-labelledby="answer-heading">
+        <div class="conversation-head">
+          <div>
+            <p class="eyebrow">Live response</p>
+            <h2 id="answer-heading">Your career reading</h2>
           </div>
+          <span id="response-state" class="response-state">Ready</span>
         </div>
 
-        <div id="response-area" class="response-area" aria-live="polite" aria-atomic="true">
-          <div class="response-placeholder">
-            <span class="placeholder-icon" aria-hidden="true">+</span>
-            <span>Your recommendation will appear here</span>
+        <div id="answer-panel" class="answer-panel" aria-live="polite">
+          <div id="empty-state" class="empty-state">
+            <span class="empty-glyph" aria-hidden="true">&#10022;</span>
+            <p>Your assessment will appear here.</p>
+            <span>Press the button to begin.</span>
+          </div>
+          <div id="loading-state" class="loading-state" hidden>
+            <span class="loader" aria-hidden="true"></span>
+            <p>Reading your profile<span class="loading-dots">...</span></p>
+          </div>
+          <pre id="answer" class="answer" hidden></pre>
+          <div id="error-state" class="error-state" hidden>
+            <span class="error-icon" aria-hidden="true">!</span>
+            <div>
+              <strong>We could not reach the assessment.</strong>
+              <p id="error-message">Check that the local API is running, then try again.</p>
+            </div>
           </div>
         </div>
       </section>
+    </main>
 
-      <div class="action-row">
-        <div class="upload-row">
-          <label for="resume-input" class="upload-label">
-            <span id="file-name-display">Choose resume (PDF or DOCX)</span>
-          </label>
-          <input type="file" id="resume-input" accept=".pdf,.docx" hidden>
-        </div>
-
-        <button id="request-button" class="request-button" type="button">
-          <span id="button-label">Find my opportunities</span>
-          <span class="button-arrow" aria-hidden="true">-&gt;</span>
-        </button>
-        <p class="privacy-note">Your resume is used once and not stored</p>
-      </div>
-    </section>
-
-    <footer class="footer">Career guidance, made personal.</footer>
-  </main>
-  <script src="script.js"></script>
+    <footer class="footer">
+      <span>Career Lens</span>
+      <span>Local workflow interface</span>
+    </footer>
+  </div>
 </body>
 </html>

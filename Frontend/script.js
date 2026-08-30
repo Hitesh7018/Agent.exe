@@ -1,71 +1,52 @@
-const requestButton = document.querySelector("#request-button");
-const buttonLabel = document.querySelector("#button-label");
-const responseArea = document.querySelector("#response-area");
-const resumeInput = document.querySelector("#resume-input");
-const fileNameDisplay = document.querySelector("#file-name-display");
+const requestButton = document.querySelector('#request-button');
+const emptyState = document.querySelector('#empty-state');
+const loadingState = document.querySelector('#loading-state');
+const answer = document.querySelector('#answer');
+const errorState = document.querySelector('#error-state');
+const errorMessage = document.querySelector('#error-message');
+const responseState = document.querySelector('#response-state');
 
-resumeInput.addEventListener("change", () => {
-  if (resumeInput.files.length) {
-    fileNameDisplay.textContent = resumeInput.files[0].name;
-  } else {
-    fileNameDisplay.textContent = "Choose resume (PDF or DOCX)";
-  }
-});
-
-function showResponse(content, type = "success") {
-  if (type === "error") {
-    responseArea.innerHTML = `<p class="error-text">${content}</p>`;
-    return;
-  }
-
-  responseArea.innerHTML = `
-    <span class="response-label">Your recommendation</span>
-    <p class="response-text"></p>
-  `;
-  responseArea.querySelector(".response-text").textContent = content;
+function showState(state) {
+  emptyState.hidden = state !== 'empty';
+  loadingState.hidden = state !== 'loading';
+  answer.hidden = state !== 'answer';
+  errorState.hidden = state !== 'error';
 }
 
-async function requestRecommendation() {
-  if (!resumeInput.files.length) {
-    showResponse("Please choose a resume file first.", "error");
-    return;
-  }
-
+async function requestAssessment() {
   requestButton.disabled = true;
-  buttonLabel.textContent = "Searching your best matches...";
-  responseArea.innerHTML = `
-    <div class="response-placeholder">
-      <span class="placeholder-icon" aria-hidden="true">...</span>
-      <span>Reviewing your career profile</span>
-    </div>
-  `;
-
-  const formData = new FormData();
-  formData.append("resume", resumeInput.files[0]);
+  requestButton.classList.add('is-loading');
+  responseState.textContent = 'Thinking';
+  showState('loading');
 
   try {
-    const response = await fetch("http://127.0.0.1:8000/execute-workflow", {
-      method: "POST",
-      body: formData
+    const response = await fetch('http://127.0.0.1:8000/execute-workflow', {
+      method: 'POST',
+      headers: { Accept: 'text/plain' }
     });
 
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status}.`);
     }
 
-    const data = await response.json();
-
-    if (data.error) {
-      showResponse(data.error, "error");
-    } else {
-      showResponse(data.result || "No recommendation was returned. Please try again.");
+    const result = await response.text();
+    if (!result.trim()) {
+      throw new Error('The workflow returned an empty answer.');
     }
+
+    answer.textContent = result;
+    responseState.textContent = 'Complete';
+    showState('answer');
   } catch (error) {
-    showResponse("I could not reach the career service. Make sure the API is running and try again.", "error");
+    errorMessage.textContent = error.message.includes('Failed to fetch')
+      ? 'Start the FastAPI service at http://127.0.0.1:8000, then try again.'
+      : error.message;
+    responseState.textContent = 'Unavailable';
+    showState('error');
   } finally {
     requestButton.disabled = false;
-    buttonLabel.textContent = "Find my opportunities";
+    requestButton.classList.remove('is-loading');
   }
 }
 
-requestButton.addEventListener("click", requestRecommendation);
+requestButton.addEventListener('click', requestAssessment);

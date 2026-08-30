@@ -37,7 +37,9 @@ class CareerAssessmentAgent:
             model="openai/gpt-oss-120b",
             temperature=0.1,
             max_tokens=1000,
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_retries=1,      # don't silently retry for a long time
+            timeout=30,
         )
 
         self.tools = [get_resume_data]

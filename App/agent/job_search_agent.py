@@ -9,7 +9,7 @@ from groq import RateLimitError
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage, ToolMessage
 from langchain_core.tools import tool
-
+from groq import Groq
 load_dotenv()
 
 
@@ -96,7 +96,9 @@ class JobSearchAgent:
             model="openai/gpt-oss-120b",
             temperature=0.1,
             max_tokens=1000,
-            api_key=os.getenv("GROQ_API_KEY")
+            api_key=os.getenv("GROQ_API_KEY"),
+            max_retries=1,      # don't silently retry for a long time
+            timeout=30
         )
         
         self.tools_list = [job_search_tool]
